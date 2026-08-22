@@ -2,9 +2,11 @@
 
 A Bopl Battle ability. Hot potato, with a countdown.
 
+<img width="800" height="450" alt="ezgif-3dbf5eab1ecf09d1" src="https://github.com/user-attachments/assets/bef38401-8a63-428c-9c5a-efb553ae7ee0" />
+
 Use it and you are holding a live bomb with an eight second fuse. Touch another player and it
-becomes theirs, and the fuse resets — so it can change hands right up to the last moment.
-Whoever is holding it when the fuse runs out dies, wherever they are and whatever they are
+becomes theirs, and the fuse resets.
+Whoever is holding it when the fuse runs out explodes, wherever they are and whatever they are
 doing.
 
 The carrier visibly holds the bomb, its fuse burning faster and its beat growing harder as the
@@ -25,27 +27,13 @@ By hand: drop `TimeBomb.dll` into `BepInEx/plugins/TimeBomb/`.
 
 ## Playing online
 
-Private lobbies work — invite a friend through Steam as usual. **Both players need the same
+Private lobbies work; invite a friend through Steam as usual. **Both players need the same
 mods installed**, or the ability lists won't line up. Thunderstore can export your whole
 profile as a code for them to import.
 
 Public matchmaking is disabled by the game whenever any mod is loaded. That's Bopl's rule, not
 this mod's.
 
-## Building from source
-
-Requires the .NET SDK and a Steam copy of Bopl Battle.
-
-```bash
-dotnet build -c Release
-```
-
-The paths to the game and to your mod profile are set at the top of `TimeBomb.csproj` — change
-them to match your machine. **Close the game before building**; Windows locks the DLL while it
-is loaded.
-
-Artwork lives in `Resources/` and is compiled into the DLL, so PNG edits only take effect
-after a rebuild.
 
 ## License
 
