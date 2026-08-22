@@ -1,0 +1,103 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Target framework: netstandard2.1. netstandard2.0 fails to build against this
+    game's dependency set. Do not change without re-verifying.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>TimeBomb</AssemblyName>
+    <RootNamespace>TimeBomb</RootNamespace>
+    <Description>A Bopl Battle ability: a hot-potato time bomb you pass by tagging other players.</Description>
+    <Version>1.0.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+
+    <!-- Where the game itself lives (Steam install). Paths contain spaces; keep quoted. -->
+    <GameDir>C:\Program Files (x86)\Steam\steamapps\common\Bopl Battle</GameDir>
+    <GameManagedDir>$(GameDir)\BoplBattle_Data\Managed</GameManagedDir>
+
+    <!-- Where this mod must end up to be loaded: the Thunderstore profile, not the
+         Steam folder. BepInEx lives in the profile. -->
+    <ProfileDir>C:\Users\12026\AppData\Roaming\Thunderstore Mod Manager\DataFolder\BoplBattle\profiles\Maha blast</ProfileDir>
+    <PluginOutDir>$(ProfileDir)\BepInEx\plugins\TimeBomb</PluginOutDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="src\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.*" />
+    <PackageReference Include="UnityEngine.Modules" Version="2019.4.5" IncludeAssets="compile" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GameManagedDir)\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Loaded at runtime via GetManifestResourceStream("TimeBomb.<file>"), so each
+         LogicalName must match that string exactly. -->
+    <!-- HeldBomb.png itself is NOT shipped. It is the hand-drawn source that
+         tools/make_bomb_art.py builds the burning-fuse frames from; the game only ever
+         loads those. Redraw HeldBomb.png, re-run the script, rebuild. -->
+    <EmbeddedResource Include="Resources\Bomb0.png">
+      <LogicalName>TimeBomb.Bomb0.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Bomb1.png">
+      <LogicalName>TimeBomb.Bomb1.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Bomb2.png">
+      <LogicalName>TimeBomb.Bomb2.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\AbilityIcon.png">
+      <LogicalName>TimeBomb.AbilityIcon.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Digit0.png">
+      <LogicalName>TimeBomb.Digit0.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Digit1.png">
+      <LogicalName>TimeBomb.Digit1.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Digit2.png">
+      <LogicalName>TimeBomb.Digit2.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Digit3.png">
+      <LogicalName>TimeBomb.Digit3.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Digit4.png">
+      <LogicalName>TimeBomb.Digit4.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Digit5.png">
+      <LogicalName>TimeBomb.Digit5.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Digit6.png">
+      <LogicalName>TimeBomb.Digit6.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Digit7.png">
+      <LogicalName>TimeBomb.Digit7.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Digit8.png">
+      <LogicalName>TimeBomb.Digit8.png</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!--
+    Post-build: copy into the Thunderstore profile's plugins folder. The game must be
+    closed before every build because Windows locks the loaded DLL; if the copy fails,
+    fail the build loudly rather than silently leaving stale code in place.
+  -->
+  <Target Name="CopyToProfilePlugins" AfterTargets="Build">
+    <MakeDir Directories="$(PluginOutDir)" Condition="!Exists('$(PluginOutDir)')" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PluginOutDir)" ContinueOnError="false" />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginOutDir)"
+          Condition="Exists('$(TargetDir)$(TargetName).pdb')" ContinueOnError="false" />
+    <Warning Text="TimeBomb.dll copied to $(PluginOutDir)" />
+  </Target>
+
+</Project>
