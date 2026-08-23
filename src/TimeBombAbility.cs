@@ -59,6 +59,21 @@ namespace TimeBomb
         public const float FuseFrameTicksSlow = 10f;
         public const float FuseFrameTicksFast = 3f;
 
+        // The last stretch of the fuse: the countdown turns red, the bomb beats twice a
+        // second instead of once, and the carrier gets a small turn of speed so they can
+        // still catch somebody. 180 ticks = the final 3 seconds.
+        public const int CriticalTicks = 180;
+
+        // What the carrier's top speed becomes while the fuse is critical, against a normal
+        // 19. Deliberately small: enough to run someone down who is not paying attention,
+        // not enough to make being "it" an advantage.
+        public static readonly Fix CriticalSpeed = (Fix)23L;
+
+        // The colour the countdown turns for those last seconds. A multiply tint, so this
+        // can only darken the white digits -- which is all a red needs to do.
+        public static readonly UnityEngine.Color CriticalTint =
+            new UnityEngine.Color(1f, 0.25f, 0.2f, 1f);
+
         // The bomb thumps once a second, and twice a second in the last three, growing
         // harder as it goes. This is what stops it looking like a sticker: a still image
         // pinned to a moving player reads as pasted on no matter how well it is drawn.
