@@ -74,12 +74,19 @@ namespace TimeBomb
         // Driven once per simulation tick from a patch on Updater.TickSimulation. Not a
         // MonoUpdatable of our own: Updater.PreLevelLoad calls updatables.Clear(), so
         // anything registered before a level loads silently stops ticking.
+        // True once the fuse is into its final seconds -- the point the countdown turns red,
+        // the bomb thumps twice a second, and the carrier gets a turn of speed.
+        public static bool IsCritical =>
+            carrierId >= 0 && ticksLeft > 0 && ticksLeft <= TimeBombAbility.CriticalTicks;
+
         public static void Tick()
         {
             if (carrierId < 0)
             {
+                BombSpeed.Clear();
                 return;
             }
+            BombSpeed.Apply(carrierId, IsCritical);
 
             PlayerHandler handler = PlayerHandler.Get();
             if (handler == null)
@@ -195,7 +202,13 @@ namespace TimeBomb
             // Every body of theirs, not one: a duplicated carrier is several objects sharing
             // an id, and the fuse was attached to the player rather than to any one of them.
             int bodiesSeen;
-            int killed = PlayerBodies.KillAll(victim, victim, CauseOfDeath.Other, out bodiesSeen);
+            // respectProtection: false. The block ability protects its user by removing
+            // their hurtbox, which stops anything being thrown or fired AT them -- but the
+            // bomb is not aimed at anybody, it is strapped to them. Hiding inside a block
+            // with a lit fuse should not defuse it, or the block is a free answer to the
+            // whole ability.
+            int killed = PlayerBodies.KillAll(victim, victim, CauseOfDeath.Other, out bodiesSeen,
+                                              respectProtection: false);
             if (killed == 0)
             {
                 PlayerBodies.WarnIfBlind(bodiesSeen, "Time Bomb");
@@ -222,6 +235,7 @@ namespace TimeBomb
 
         public static void Clear()
         {
+            BombSpeed.Clear();
             carrierId = -1;
             ticksLeft = 0;
             passImmunityTicks = 0;
