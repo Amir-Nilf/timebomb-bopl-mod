@@ -86,6 +86,12 @@ namespace TimeBomb
             counter.transform.localScale = new Vector3(scale, scale, 1f);
             counterRenderer.sortingLayerID = target.sortingLayerID;
             counterRenderer.sortingOrder = target.sortingOrder + 2;
+            // Red for the last seconds, which is the same moment the bomb starts beating
+            // twice a second and the carrier gets their turn of speed. One signal, three
+            // ways of reading it, so nobody has to be watching the number to notice.
+            counterRenderer.color = BombState.IsCritical
+                ? TimeBombAbility.CriticalTint
+                : Color.white;
 
             // The bomb sits low and off to the side the carrier is facing, so it looks
             // tucked under an arm rather than pasted over the middle of them.
